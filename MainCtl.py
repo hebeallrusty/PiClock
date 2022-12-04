@@ -12,6 +12,7 @@ import smbus2
 # custom libraries
 from Sun import Sun
 from Moon import Moon
+from Season import Season
 
 
 
@@ -55,6 +56,7 @@ while True:
     print("Moon: ",m.MoonPhase())
     bme280_data = bme280.sample(bme280_bus,bme280_address,bme280_calibration_params)
     print("Temp: ",round(bme280_data.temperature,1), "deg Humidity: ", round(bme280_data.humidity,0), "% Pressure: ",round(bme280_data.pressure,0))
+    print(Season(NOW))
     print(NOW.strftime('%H:%M:%S %a %d-%m-%y'))
     
     
