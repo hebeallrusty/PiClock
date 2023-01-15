@@ -14,6 +14,17 @@ from Sun import Sun
 from Moon import Moon
 from Season import Season
 
+# thrown in 7 seg stuff
+# installed blinka and adafruit circuit python ht16k33 module - add to requirements
+import board
+from adafruit_ht16k33.segments import Seg7x4
+from time import sleep
+
+i2c = board.I2C()
+display = Seg7x4(i2c,address = 0x70)
+display.brightness = 0.1
+
+## end of thrown in 7 seg stuff
 
 
 print("Initilising")
@@ -59,6 +70,9 @@ while True:
     print(Season(NOW))
     print(NOW.strftime('%H:%M:%S %a %d-%m-%y'))
     
+    tempdigits = str(round(bme280_data.temperature,0))
+    for i in range(0,2):
+        display[i]=str(tempdigits[i])
     
 
 
