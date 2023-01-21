@@ -86,6 +86,7 @@ while True:
     #for i in range(0,2):
     #    display[i]=str(tempdigits[i])
     display(int(round(bme280_data.temperature,0)),(0,0))
+    display(int(round(bme280_data.humidity,0)),(1,0))
 
 
     tm.sleep(0.5)

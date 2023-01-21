@@ -8,6 +8,7 @@ i2c = board.I2C()
 matrix = matrix.Matrix16x8(i2c,address = 0x70)
 
 matrix.fill(0)
+matrix.brightness = 0.1
 
 def glyph(g):
     # return an tuple with the digits to set as on for the glyph it represents. Not to be called directly, but through a function. It won't explode, but it'll only default producing glyphs that'll work on the first cluster on a cathode, which can hold 2nr'
@@ -81,7 +82,7 @@ def column(c,g):
         return [t,u]
     elif c == 1:
         # each glyph just needs shifted by 8 rows for the second cluster on each cathode
-        return [tuple([z + 8 for z in t]), tuple([x + y for y in u])]
+        return [tuple([z + 8 for z in t]), tuple([x + 8 for x in u])]
     else:
         return [t,u]
 
@@ -114,7 +115,8 @@ def display(n,coords):
             matrix[2 * r + i, j] = 0
 
 
-
+#display(64,(4,0))
+#matrix[2,5]=1
 
 #while True:
 #    display(64,(0,0))
