@@ -10,6 +10,9 @@ matrix = matrix.Matrix16x8(i2c,address = 0x70)
 matrix.fill(0)
 matrix.brightness = 0.1
 
+
+# something isn't right about this code - it works, but not in the way that it should, or that is expected based on the wiring. The matrix may be the wrong way around!!'
+
 def glyph(g):
     # return an tuple with the digits to set as on for the glyph it represents. Not to be called directly, but through a function. It won't explode, but it'll only default producing glyphs that'll work on the first cluster on a cathode, which can hold 2nr'
     if g == 1:
@@ -77,11 +80,14 @@ def column(c,g):
     t = glyph(g)
     u = antiglyph(g)
 
+    #print([t,u])
+
     # glyph needs to be transposed into the correct cluster
     if c == 0:
         return [t,u]
     elif c == 1:
         # each glyph just needs shifted by 8 rows for the second cluster on each cathode
+        #print([tuple([z + 8 for z in t]), tuple([x + 8 for x in u])])
         return [tuple([z + 8 for z in t]), tuple([x + 8 for x in u])]
     else:
         return [t,u]
@@ -113,10 +119,24 @@ def display(n,coords):
         # blank out those glyph bars that aren't relevant with the antiglyph'
         for j in g[1]:
             matrix[2 * r + i, j] = 0
+    # small hack to make the hour / minute decimal points appear    
+    matrix[1,7] =1
+    matrix[3,7] = 1
+    
 
 
-#display(64,(4,0))
-#matrix[2,5]=1
+#display(5,(5,0))
+#for i in range(0,8):
+#    for j in range(0,17):
+#        matrix[j,i]=1
+#        sleep(0.1)
+
+#
+##
+# matrix[c,a] where c = cathode (digit); a = anode (segment)
+
+#matrix[8,0]=1
+#matrix[8,1]=1
 
 #while True:
 #    display(64,(0,0))
