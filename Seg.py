@@ -3,18 +3,29 @@ import board
 from adafruit_ht16k33 import matrix
 from time import sleep
 
+import Config
+
 i2c = board.I2C()
 
-matrix = matrix.Matrix16x8(i2c,address = 0x70)
+# create the object which is the matrix of segments
+SegMatrix = []
 
-matrix.fill(0)
-matrix.brightness = 1
+# iterate through all the HT16K33's in the config, and add them to a list of objects to interact with
+for i in Config.HT16K33:
+    SegMatrix.append(matrix.Matrix16x8(i2c,address = int(str(i),16), auto_write = False))
+
+# clear current display and set brightness to 100%
+for i in range(0,len(SegMatrix)):
+    SegMatrix[i].fill(0)
+    SegMatrix[i].brightness = 1
+    
 
 def glyph(g):
-    # return an tuple with the digits to set as on for the glyph it represents. Not to be called directly, but through a function. It won't explode, but it'll only default producing glyphs that'll work on the first cluster on a cathode, which can hold 2nr'
+    # return an tuple with the digits to set as on for the glyph it represents. Not to be called directly, but through a function. It won't explode, but just don't do it
     # returns [glyph segments, antiglyph segments for blanking]
     #
-    # glyphs are 0 for the top seg going clockwise with 7 as the decimal point
+    # glyphs are 0 for the top seg going clockwise with 7 as the decimal point. 
+    # THESE ARE GLYPH INDEXS for clarity
     
     if g == 1: # 1
         return [(1,2),(0,3,4,5,6,7)]
@@ -60,12 +71,16 @@ def glyph(g):
         return [(4,6),(0,1,2,3,5,7)]
     elif g == 22: # o
         return [(6,2,3,4),(0,1,5,7)]
+    elif g == 23: # -
+        return[(6,),(0,1,2,3,4,5,7)]
+    elif g == 24: # add dot to existing
+        return[(7,),()]
 
     else: # return an E
         return [(0,5,6,4,3),(1,2,7)]
 
-def disp(d, bank):
-    # plot a digit and display it on the bank noted
+def disp(d, bank, addr):
+    # plot a glyph based on index d and display it on the bank noted,
     
     # get the glyphs and anti-glyphs for digit g
     g,a = glyph(d)
@@ -74,14 +89,17 @@ def disp(d, bank):
     # glyphs to light
     for i in g:
         #print("on:",i)
-        matrix[bank,i] = 1
+        SegMatrix[addr][bank,i] = 1
         
     # glyphs to blank off
     for i in a:
         #print("off:",i)
-        matrix[bank,i] = 0
+        SegMatrix[addr][bank,i] = 0
 
-def add_dot(bank):
-    matrix[bank,7] = 1
+def add_dot(bank,addr):
+    SegMatrix[addr][bank,7] = 1
+
+def dispupdate(addr):
+    SegMatrix[addr].show()
 
 
