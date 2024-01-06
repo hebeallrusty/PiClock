@@ -17,7 +17,7 @@ for i in Config.HT16K33:
 # clear current display and set brightness to 100%
 for i in range(0,len(SegMatrix)):
     SegMatrix[i].fill(0)
-    SegMatrix[i].brightness = 1
+    SegMatrix[i].brightness = 0.05
     
 
 def glyph(g):
@@ -75,15 +75,25 @@ def glyph(g):
         return[(6,),(0,1,2,3,4,5,7)]
     elif g == 24: # add dot to existing
         return[(7,),()]
+    elif g == 25: # end bar |
+        return[(1,2),(0,3,4,5,6,7)]
+    elif g == 26: # -|
+        return[(1,2,6),(0,3,4,5,7)]
+    elif g == 27: # |-
+        return[(4,5,6),(0,1,2,3,7)]
 
     else: # return an E
         return [(0,5,6,4,3),(1,2,7)]
 
-def disp(d, bank, addr):
+def disp(d, bank, addr,gen=[(0,0,0,0,0,0,0,0),()]):
     # plot a glyph based on index d and display it on the bank noted,
-    
-    # get the glyphs and anti-glyphs for digit g
-    g,a = glyph(d)
+    # gen is (if relevant) a generic glyph to operate the LEDs; d == 99 for this mode
+
+    if d != 99:
+        # get the glyphs and anti-glyphs for digit g
+        g,a = glyph(d)
+    else:
+        g,a = gen
 
     #print(g,a)
     # glyphs to light
@@ -95,6 +105,9 @@ def disp(d, bank, addr):
     for i in a:
         #print("off:",i)
         SegMatrix[addr][bank,i] = 0
+
+def gendisp(addr,):
+    SegMatrix[addr][x,y] = state
 
 def add_dot(bank,addr):
     SegMatrix[addr][bank,7] = 1
